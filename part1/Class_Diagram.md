@@ -1,63 +1,64 @@
 ## Class Diagram
 
 ```mermaid
+---
+config:
+  look: neo
+  layout: elk
+  theme: neo
+---
 classDiagram
-class User {
-    +id : UUID
-    +first_name : String
-    +last_name : String
-    +email : String
-    -password : String
-    -is_admin : Boolean
-    -created_at : DateTime
-    -updated_at : DateTime
-    +register()
-    +update_profile()
-    +delete()
-    +is_admin()
-}
-class Place {
-    +id : UUID
-    +title : String
-    +description : String
-    +price : Float
-    +latitude : Float
-    +longitude : Float
-    +owner : User
-    +amenities : List
-    -created_at : DateTime
-    -updated_at : DateTime
-    +create()
-    +update()
-    +delete()
-    +list_amenities()
-    +add_amenity()
-    +remove_amenity()
-}
-class Review {
-    +id : UUID
-    +place : Place
-    +user : User
-    +rating : Integer
-    +comment : String
-    -created_at : DateTime
-    -updated_at : DateTime
-    +create()
-    +update()
-    +delete()
-}
-class Amenity {
-    +id : UUID
-    +name : String
-    +description : String
-    -created_at : DateTime
-    -updated_at : DateTime
-    +create()
-    +update()
-    +delete()
-}
-User --|> Place : Association
-Place *-- Review : Composition
-Review *-- User : Composition
-Place --> Amenity : Association
+direction BT
+    class BaseModel {
+	    +UUID Id
+	    +datetime CreatedAt
+	    +datetime UpdatedAt
+	    +create()
+	    +read()
+	    +update()
+	    +save()
+	    +delete()
+    }
+    class Amenity {
+	    +UUID IdAmenity
+	    +UUID IdPlace
+	    +string Name
+    }
+    class Review {
+	    +UUID IdPlace
+	    +UUID IdUser
+	    +string Title
+	    +string Text
+	    +int Rating
+    }
+    class Place {
+	    +UUID IdPlace
+	    +UUID IdUser
+	    +string Title
+	    +string Description
+	    +float Price
+	    +float Latitude
+	    +float Longitude
+	    +User Owner
+	    +int Rooms
+	    +int Capacity
+	    +float Surface
+    }
+    class User {
+	    +UUID IdUser
+	    +string FirstName
+	    +string LastName
+	    +string Email
+	    +string Password
+	    +bool IsAdmin
+	    +string PaymentMethod
+    }
+    Review o-- Place : receives
+    Amenity o-- Place : has
+    User --|> BaseModel : Inheritance
+    Place --|> BaseModel : Inheritance
+    Review --|> BaseModel : Inheritance
+    Amenity --|> BaseModel : Inheritance
+    User --> Place : creates
+    Amenity --> Place : is part of
 ```
