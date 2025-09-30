@@ -8,7 +8,6 @@ class PresentationLayer {
 
 }
 class BusinessLogicLayer {
-    +ModelClasses
     +UserEntity
     +PlaceEntity
     +ReviewEntity
@@ -21,8 +20,8 @@ class PersistenceLayer {
     +WriteData()
 }
 note for PresentationLayer "Layer handling appearance"
-        note for BusinessLogicLayer "Layer handling entities edition"
-        note for PersistenceLayer "Layer handling data management"
+note for BusinessLogicLayer "Layer handling entities edition"
+note for PersistenceLayer "Layer handling data management"
 PresentationLayer --> BusinessLogicLayer : Facade Pattern
 BusinessLogicLayer --> PersistenceLayer : Database Operations
 ```
