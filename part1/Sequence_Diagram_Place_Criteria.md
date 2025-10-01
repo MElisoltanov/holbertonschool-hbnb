@@ -6,7 +6,7 @@ participant API
 participant BusinessLogic
 participant Database
 
-User->>API: User Requests Places Criterias
+User->>API: User Requests Place Criteria
 API->>BusinessLogic: Validate and Process Request
 BusinessLogic->>Database: Search For Specific Data
 Database-->>BusinessLogic: Return Data Found
