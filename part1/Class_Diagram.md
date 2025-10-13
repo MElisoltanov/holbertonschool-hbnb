@@ -1,6 +1,3 @@
-## Class Diagram
-
-```mermaid
 ---
 config:
   look: neo
@@ -9,56 +6,56 @@ config:
 ---
 classDiagram
 direction BT
-    class BaseModel {
-	    +UUID Id
-	    +datetime CreatedAt
-	    +datetime UpdatedAt
-	    +create()
-	    +read()
-	    +update()
-	    +save()
-	    +delete()
-    }
-    class Amenity {
-	    +UUID IdAmenity
-	    +UUID IdPlace
-	    +string Name
-    }
-    class Review {
-	    +UUID IdPlace
-	    +UUID IdUser
-	    +string Title
-	    +string Text
-	    +int Rating
-    }
-    class Place {
-	    +UUID IdPlace
-	    +UUID IdUser
-	    +string Title
-	    +string Description
-	    +float Price
-	    +float Latitude
-	    +float Longitude
-	    +User Owner
-	    +int Rooms
-	    +int Capacity
-	    +float Surface
-    }
-    class User {
-	    +UUID IdUser
-	    +string FirstName
-	    +string LastName
-	    +string Email
-	    +string Password
-	    +bool IsAdmin
-	    +string PaymentMethod
-    }
-    Review o-- Place : receives
-    Amenity o-- Place : has
-    User --|> BaseModel : Inheritance
-    Place --|> BaseModel : Inheritance
-    Review --|> BaseModel : Inheritance
-    Amenity --|> BaseModel : Inheritance
-    User --> Place : creates
-    Amenity --> Place : is part of
-```
+
+class BaseModel {
+    +UUID id
+    +datetime created_at
+    +datetime updated_at
+    +create()
+    +read()
+    +update()
+    +save()
+    +delete()
+}
+
+class User {
+    +string first_name
+    +string last_name
+    +string email
+    +string password
+    +bool is_admin
+    +string payment_method
+}
+
+class Place {
+    +UUID user_id
+    +string title
+    +string description
+    +float price
+    +float latitude
+    +float longitude
+    +int rooms
+    +int capacity
+    +float area
+}
+
+class Review {
+    +UUID user_id
+    +UUID place_id
+    +string title
+    +string text
+    +int rating
+}
+
+class Amenity {
+    +string name
+}
+
+User --|> BaseModel
+Place --|> BaseModel
+Review --|> BaseModel
+Amenity --|> BaseModel
+
+User "1" --> "0..*" Place : creates
+Place "1" --> "0..*" Review : receives
+Place "1..*" o-- "1..*" Amenity : has
