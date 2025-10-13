@@ -12,11 +12,12 @@ Here’s how your final diagram entities connect to your Python implementation:
 | `Amenity `       | models/amenity.py    | Many-to-many with Place|
 
 
+| **Good**            | **Improve**                                   |
+| :-----------------: | ------------------------------------------------- |
+| Inheritance structure      | Remove redundant Id* attributes                        |
+| Relationships defined    | Adjust Amenity to many-to-many.                        |
+| Attributes typed      | Replace Owner object with user_id. |
 
-Good                                Improve
-Inheritance structure	            Remove redundant Id* attributes
-Relationships defined	            Adjust Amenity to many-to-many
-Attributes typed	                Replace Owner object with user_id
 
 ## 📄 <span id="Multiplicity">Multiplicity</span>
 How many objects of each class take part in the relationships and multiplicity can be expressed as:
