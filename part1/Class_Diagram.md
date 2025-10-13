@@ -1,3 +1,6 @@
+## Class Diagram
+
+```mermaid
 ---
 config:
   look: neo
