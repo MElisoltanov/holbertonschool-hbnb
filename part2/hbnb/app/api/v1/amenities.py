@@ -1,10 +1,11 @@
 from flask_restx import Namespace, Resource, fields
-from app.services import facade
+from app.services.facade import HBnBFacade
 from flask import request
-from app.models import Amenity
 
 
 api = Namespace('amenities', description='Amenity operations')
+
+facade = HBnBFacade()
 
 # Define the amenity model for input validation and documentation
 amenity_model = api.model('Amenity', {
@@ -24,15 +25,15 @@ class AmenityList(Resource):
             api.abort(400, "Missing required field: name")
         try:
             amenity = facade.create_amenity({'name': data['name']})
-            return amenity, 201
+            return amenity.to_dict(), 201
         except Exception as e:
             api.abort(400, str(e))
 
     @api.response(200, 'List of amenities retrieved successfully')
     def get(self):
         """Retrieve a list of all amenities"""
-        amenities = facade.get.all_amenities()
-        return amenities, 200
+        amenities = facade.get_all_amenities()
+        return [a.to_dict() for a in amenities], 200
 
 
 @api.route('/<amenity_id>')
@@ -41,7 +42,7 @@ class AmenityResource(Resource):
     @api.response(404, 'Amenity not found')
     def get(self, amenity_id):
         """Get amenity details by ID"""
-        amenity = facade.get_amenity_by_id(amenity_id)
+        amenity = facade.get_amenity(amenity_id)
         if not amenity:
             api.abort(404, "Amenity with id{} not found".format(amenity_id))
         return amenity, 200
