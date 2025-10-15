@@ -35,5 +35,5 @@ class HBnBFacade:
             return None
         for key, value in amenity_data.items():
             setattr(amenity, key, value)
-        self.amenity_repo.update(amenity)
+        self.amenity_repo.update(amenity.id, amenity)
         return amenity

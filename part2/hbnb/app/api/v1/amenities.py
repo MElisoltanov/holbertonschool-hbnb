@@ -45,7 +45,8 @@ class AmenityResource(Resource):
         amenity = facade.get_amenity(amenity_id)
         if not amenity:
             api.abort(404, "Amenity with id{} not found".format(amenity_id))
-        return amenity, 200
+        return amenity.to_dict(), 200
+
 
     @api.expect(amenity_model)
     @api.response(200, 'Amenity updated successfully')
@@ -62,6 +63,6 @@ class AmenityResource(Resource):
                 api.abort(
                     404,
                     "Amenity with the id {} not found".format(amenity_id))
-            return updated_amenity, 200
+            return updated_amenity.to_dict(), 200
         except Exception as e:
             api.abort(400, str(e))
