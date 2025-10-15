@@ -9,5 +9,5 @@ def create_app():
 
     # Placeholder for API namespaces (endpoints will be added later)
     # Additional namespaces for places, reviews, and amenities will be added later
-    api.add_namespace(amenities, path= 'api/v1/amenities')
+    api.add_namespace(amenities_ns, path= '/api/v1/amenities')
     return app

@@ -1,5 +1,8 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
+from flask import request
+from app.models import Amenity
+
 
 api = Namespace('amenities', description='Amenity operations')
 
@@ -20,7 +23,7 @@ class AmenityList(Resource):
         if not data or 'name' not in data:
             api.abort(400, "Missing required field: name")
         try:
-            amenity = facade.create_amenity(data['name'])
+            amenity = facade.create_amenity({'name': data['name']})
             return amenity, 201
         except Exception as e:
             api.abort(400, str(e))
@@ -50,10 +53,10 @@ class AmenityResource(Resource):
     def put(self, amenity_id):
         """Update an amenity's information"""
         data = request.json
-        if not date or 'name' not in data:
+        if not data or 'name' not in data:
             api.abort(400, "Missing required field: name")
         try:
-            updated_amenity = facade.update_amenity(amenity_id, data['name'])
+            updated_amenity = facade.update_amenity(amenity_id,{'name': data['name']})
             if not updated_amenity:
                 api.abort(
                     404,
