@@ -9,6 +9,7 @@ class HBnBFacade:
     review_repo = InMemoryRepository()
     amenity_repo = InMemoryRepository()
 
+
     def __init__(self):
         pass
 
