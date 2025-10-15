@@ -14,7 +14,7 @@ class Place(BaseModel):
             raise ValueError("Longitude must be between -180 and 180.")
         if not owner:
             raise ValueError("Place must have an owner User instance.")
-
+        
         self.title = title
         self.description = description
         self.price = price
