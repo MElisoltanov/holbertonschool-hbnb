@@ -25,6 +25,7 @@ place_model = api.model('Place',
     'latitude': fields.Float(required=True),
     'longitude': fields.Float(required=True),
     'owner_id': fields.String(required=True),
+    'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
     })
 
 @api.route('/')
@@ -36,6 +37,10 @@ class PlaceList(Resource):
         """Create a new place"""
      
         data = request.json
+        owner = facade.get_user(data["owner_id"])
+        if not owner:
+            return {"Error": "invalid owner"}, 400
+
         place = facade.create_place(data)
         return ({
                 "id": place.id,
@@ -43,6 +48,7 @@ class PlaceList(Resource):
                 "price": place.price,
                 "latitude": place.latitude,
                 "longitude": place.longitude
+
             }), 201
 
     @api.response(200, 'List of places')
@@ -68,6 +74,18 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {"error": "Place not found"}, 404
+        
+        amenities = []
+
+        amenities = []
+        for amenity_id in place.amenities:
+            amenity = facade.get_amenity(amenity_id)
+            if amenity:
+                amenities.append({
+                "id": amenity.id,
+                "name": amenity.name
+                            })
+
         owner = facade.get_user(place.owner_id)
         return ({
             "id": place.id,
@@ -81,7 +99,8 @@ class PlaceResource(Resource):
                 "first name":owner.first_name,
                 "last name":owner.last_name,
                 "email":owner.email
-            }
+                    },
+            "amenities":amenities
         })
 
     @api.expect(place_model)
@@ -90,10 +109,16 @@ class PlaceResource(Resource):
     def put(self, place_id):
         """Update place info"""
         data = api.payload
-        try:
-            place = facade.update_place(place_id, data)
-            return {"message": "Place updated successfully"}, 200
-        except ValueError as e:
-            return {"error": str(e)}, 404
-        except Exception as e:
-            return {"error": str(e)}, 400
+
+        place = facade.get_place(place_id)
+        if not place:
+            return{"Error": "Place not found"}, 404
+        
+        owner = facade.get_user(data["owner_id"])
+        if not owner:
+            return {"Error": "Invalid owner"}, 400
+
+        facade.update_place(place_id, data)
+
+        return {"message": "Place updated successfully"}, 200
+ 
