@@ -3,7 +3,6 @@ from app.models.place import Place
 from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.review import Review
-
 class HBnBFacade:
         
     user_repo = InMemoryRepository()
@@ -24,7 +23,8 @@ class HBnBFacade:
         place_data.get("price"),
         place_data.get("latitude"),
         place_data.get("longitude"),
-        place_data.get("owner_id")
+        place_data.get("owner_id"),
+        place_data.get("amenities")
         )
 
         self.place_repo.add(new_place)
@@ -51,7 +51,6 @@ class HBnBFacade:
         return place
     
     """user facade"""
-
         # Placeholder method for creating a user
     def create_user(self, user_data):
         user = User(**user_data)
@@ -66,17 +65,8 @@ class HBnBFacade:
 
     def get_all_users(self):
         return self.user_repo.get_all()
-
+    
     """Amenity facade """
-
-    def create_user(self, user_data):
-        # Logic will be implemented in later tasks
-        pass
-
-    # Placeholder method for fetching a place by ID
-    def get_place(self, place_id):
-        # Logic will be implemented in later tasks
-        pass
 
     def create_amenity(self, amenity_data):
         amenity = Amenity(**amenity_data)
@@ -125,7 +115,7 @@ class HBnBFacade:
         return self.review_repo.get(review_id)
 
     def get_all_reviews(self):
-        return self.review.repo.get_all()
+        return self.review_repo.get_all()
 
     def get_reviews_by_place(self, place_id):
         all_reviews = self.review_repo.get_all()
@@ -153,3 +143,4 @@ class HBnBFacade:
             return False
         self.review_repo.delete(review_id)
         return True
+

@@ -31,7 +31,7 @@ class ReviewList(Resource):
     def get(self):
         """Retrieve a list of all reviews"""
         reviews = facade.get_all_reviews()
-        return [r.to_dict() for r in reverse], 200
+        return [r.to_dict() for r in reviews], 200
 
 @api.route('/<review_id>')
 class ReviewResource(Resource):
@@ -51,13 +51,13 @@ class ReviewResource(Resource):
     def put(self, review_id):
         """Update a review's information"""
         data = request.json
-    try:
-        review = facade.update_review(review_id, data)
-        if not review:
-            return {"message": "Review not found"}, 404
-        return {"message": "Review updated successfully"}, 200
-    except ValueError as e:
-        return {"message": str(e)}, 400
+        try:
+            review = facade.update_review(review_id, data)
+            if not review:
+                return {"message": "Review not found"}, 404
+            return {"message": "Review updated successfully"}, 200
+        except ValueError as e:
+            return {"message": str(e)}, 400
 
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
