@@ -25,8 +25,7 @@ class Review(BaseModel):
             "place_id": self.place_id,
             "text": self.text,
             "rating": self.rating,
-            "created_at": self.created_at.isoformat(),
-            "updated_at": self.updated_at.isoformat(),
+            
         }
 
     def __str__(self):

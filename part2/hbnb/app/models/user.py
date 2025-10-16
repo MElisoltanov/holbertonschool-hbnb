@@ -22,9 +22,6 @@ class User(BaseModel):
         if '@' not in email or '.' not in email.split('@')[-1]:
             raise ValueError("email must be a valid email address")
 
-        if email in User._emails:
-            raise ValueError("email must be unique")
-
         User._emails.add(email)
         self.first_name = first_name
         self.last_name = last_name

@@ -2,8 +2,8 @@ from app.models.BaseModel import BaseModel
 
 
 class Place(BaseModel):
-    
-    def __init__(self, title, description, price, latitude, longitude, owner_id):
+
+    def __init__(self, title, description, price, latitude, longitude, owner_id, amenities):
         super().__init__()
         if not title or len(title) > 100:
             raise ValueError("Title is required max 100 chars.")
@@ -23,7 +23,7 @@ class Place(BaseModel):
         self.longitude = longitude
         self.owner_id = owner_id
         self.reviews = []
-        self.amenities = []
+        self.amenities = amenities
 
     def add_review(self, review):
         """Add a review to the place."""
