@@ -31,7 +31,7 @@ class UserList(Resource):
     @api.response(200, 'List of users retieved successfully')
     def get(self):
         """Get list of all users"""
-        users = facade.user_repo.all()
+        users = facade.get_all_users()
         return [
         {
             'id': user.id,

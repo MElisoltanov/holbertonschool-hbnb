@@ -5,6 +5,18 @@ from app.services.facade import HBnBFacade
 api = Namespace('places', description='Place operations')
 facade = HBnBFacade()
 
+amenity_model = api.model('PlaceAmenity', {
+    'id': fields.String(description='Amenity ID'),
+    'name': fields.String(description='Name of the amenity')
+})
+
+user_model = api.model('PlaceUser', {
+    'id': fields.String(description='User ID'),
+    'first_name': fields.String(description='First name of the owner'),
+    'last_name': fields.String(description='Last name of the owner'),
+    'email': fields.String(description='Email of the owner')
+})
+
 place_model = api.model('Place', 
     {
     'title': fields.String(required=True),
@@ -13,7 +25,6 @@ place_model = api.model('Place',
     'latitude': fields.Float(required=True),
     'longitude': fields.Float(required=True),
     'owner_id': fields.String(required=True),
-    'amenities': fields.List(fields.String),
     })
 
 @api.route('/')
@@ -57,7 +68,7 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {"error": "Place not found"}, 404
-
+        owner = facade.get_user(place.owner_id)
         return ({
             "id": place.id,
             "title": place.title,
@@ -65,13 +76,12 @@ class PlaceResource(Resource):
             "price": place.price,
             "latitude": place.latitude,
             "longitude": place.longitude,
-            "owner": {
-                "id": place.owner.id,
-                "first_name": place.owner.first_name,
-                "last_name": place.owner.last_name,
-                "email": place.owner.email
-            },
-            "amenities": [{"id": a.id, "name": a.name} for a in place.amenities]
+            "owner":{
+                "id":owner.id,
+                "first name":owner.first_name,
+                "last name":owner.last_name,
+                "email":owner.email
+            }
         })
 
     @api.expect(place_model)

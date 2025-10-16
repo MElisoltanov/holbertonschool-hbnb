@@ -2,7 +2,7 @@ from app.models.BaseModel import BaseModel
 
 
 class Place(BaseModel):
-    def __init__(self, title, description, price, latitude, longitude, owner):
+    def __init__(self, title, description, price, latitude, longitude, owner_id):
         super().__init__()
         if not title or len(title) > 100:
             raise ValueError("Title is required max 100 chars.")
@@ -12,7 +12,7 @@ class Place(BaseModel):
             raise ValueError("Latitude must be between -90 and 90.")
         if not (-180 <= longitude <= 180):
             raise ValueError("Longitude must be between -180 and 180.")
-        if not owner:
+        if not owner_id:
             raise ValueError("Place must have an owner User instance.")
         
         self.title = title
@@ -20,7 +20,7 @@ class Place(BaseModel):
         self.price = price
         self.latitude = latitude
         self.longitude = longitude
-        self.owner = owner
+        self.owner_id = owner_id
         self.reviews = []
         self.amenities = []
 
