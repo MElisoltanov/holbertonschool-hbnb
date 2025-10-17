@@ -3,7 +3,6 @@ from app.services import facade
 
 api = Namespace('users', description='User operations')
 
-# Define the user model for input validation and documentation
 user_model = api.model('User', {
     'first_name': fields.String(required=True, description='First name of the user'),
     'last_name': fields.String(required=True, description='Last name of the user'),
@@ -33,13 +32,14 @@ class UserList(Resource):
         """Get list of all users"""
         users = facade.get_all_users()
         return [
-        {
-            'id': user.id,
-            'first_name': user.first_name,
-            'last_name': user.last_name,
-            'email': user.email
-        } for user in users
-    ], 200
+                {
+                    'id': user.id,
+                    'first_name': user.first_name,
+                    'last_name': user.last_name,
+                    'email': user.email
+                } for user in users
+                ], 200
+
 
 @api.route('/<user_id>')
 class UserResource(Resource):
@@ -67,14 +67,12 @@ class UserResource(Resource):
         if not user:
             return {'error': 'User not found'}, 404
         data = api.payload
-        #Basical validations
         if 'first_name' in data and (not data['first_name'] or len(data['first_name']) > 50):
             return {'error': 'Invalid first_name'}, 400
         if 'last_name' in data and (not data['last_name'] or len(data['last_name']) > 50):
             return {'error': 'Invalid last_name'}, 400
         if 'email' in data and (not data['email'] or '@' not in data['email']):
             return {'error': 'Invalid email'}, 400
-        #Update
         user.first_name = data.get('first_name', user.first_name)
         user.last_name = data.get('last_name', user.last_name)
         user.email = data.get('email', user.email)
