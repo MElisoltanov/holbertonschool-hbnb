@@ -3,13 +3,13 @@ from app.models.place import Place
 from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.review import Review
+
+
 class HBnBFacade:
-        
     user_repo = InMemoryRepository()
     place_repo = InMemoryRepository()
     review_repo = InMemoryRepository()
     amenity_repo = InMemoryRepository()
-
 
     def __init__(self):
         pass
@@ -17,14 +17,14 @@ class HBnBFacade:
     def create_place(self, place_data):
         owner = User(first_name="Temp", last_name="User", email="temp@example.com")
 
-        new_place = Place( 
-        place_data.get("title"),
-        place_data.get("description"),
-        place_data.get("price"),
-        place_data.get("latitude"),
-        place_data.get("longitude"),
-        place_data.get("owner_id"),
-        place_data.get("amenities")
+        new_place = Place(
+                            place_data.get("title"),
+                            place_data.get("description"),
+                            place_data.get("price"),
+                            place_data.get("latitude"),
+                            place_data.get("longitude"),
+                            place_data.get("owner_id"),
+                            place_data.get("amenities")
         )
 
         self.place_repo.add(new_place)
@@ -47,11 +47,10 @@ class HBnBFacade:
         for key, value in place_data.items():
             if hasattr(place, key):
                 setattr(place, key, value)
-
         return place
-    
+
     """user facade"""
-        # Placeholder method for creating a user
+
     def create_user(self, user_data):
         user = User(**user_data)
         self.user_repo.add(user)
@@ -65,7 +64,7 @@ class HBnBFacade:
 
     def get_all_users(self):
         return self.user_repo.get_all()
-    
+
     """Amenity facade """
 
     def create_amenity(self, amenity_data):
@@ -78,7 +77,7 @@ class HBnBFacade:
 
     def get_all_amenities(self):
         return self.amenity_repo.get_all()
-        
+
     def update_amenity(self, amenity_id, amenity_data):
         amenity = self.amenity_repo.get(amenity_id)
         if not amenity:
@@ -87,7 +86,7 @@ class HBnBFacade:
             setattr(amenity, key, value)
         self.amenity_repo.update(amenity.id, amenity)
         return amenity
-    
+
     """Review facade"""
 
     def create_review(self, review_data):
@@ -107,7 +106,7 @@ class HBnBFacade:
         if not (1 <= rating <= 5):
             raise ValueError("Rating must be between 1 and 5")
 
-        review = Review(text=text, rating=rating, user_id=user_id, place_id= place_id)
+        review = Review(text=text, rating=rating, user_id=user_id, place_id=place_id)
         self.review_repo.add(review)
         return review
 
