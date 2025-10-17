@@ -20,23 +20,26 @@
 
 ## 📄 <span id="description">Description</span>
 
-The HBnB project, developed as part of Holberton School's curriculum, is a replica of the Airbnb platform. It focuses on building a web application enabling users to create, browse, and reserve lodging listings.
+The HBnB project, developed as part of Holberton School's curriculum, is a replica of the Airbnb platform. 
+
+It focuses on building a web application enabling users to create, browse, and reserve lodging listings.
 
 ## 📂 <span id="files-description">File description</span>
 
 | **FILE**            | **DESCRIPTION**                                   |
 | :-----------------: | ------------------------------------------------- |
 | `part1`       | Documentation and UML files.                          |
+| `part2`       | Implementation of Business Logic and API Endpoints.                          |
 | `README.md`     | README file.                        |
 
 
 ## 🔧 <span id="whats-next">What's next?</span>
 
-- Continue with the  differents task of each week.
+- Continue with the part3 of the project
 
 ## ♥️ <span id="thanks">Thanks</span>
 
-- To the guapitos. 
+- The helpers. 
 
 ## 👷 <span id="authors">Authors</span>
 
