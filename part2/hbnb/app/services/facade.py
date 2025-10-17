@@ -29,7 +29,8 @@ class HBnBFacade:
 
         self.place_repo.add(new_place)
         return (new_place)
-
+    
+    """Places facade"""
     def get_place(self, place_id):
         place = self.place_repo.get(place_id)
         if not place:
@@ -127,15 +128,19 @@ class HBnBFacade:
             return None
 
         if 'text' in review_data:
-            review.text = review_data['text']
+            text = review_data['text']
+            if not text or not isinstance(text, str):
+                raise ValueError("Text must be a non-empty string.")
+            review.text = text
+
         if 'rating' in review_data:
             rating = review_data['rating']
-            if not (1 <= rating <= 5):
-                raise ValueError("Rating must be between 1 and 5.")
+            if not isinstance(rating, int) or not (1 <= rating <= 5):
+                raise ValueError("Rating must be an integer between 1 and 5.")
             review.rating = rating
 
         self.review_repo.update(review_id, review)
-        return Review
+        return review
 
     def delete_review(self, review_id):
         review = self.review_repo.get(review_id)
@@ -143,4 +148,3 @@ class HBnBFacade:
             return False
         self.review_repo.delete(review_id)
         return True
-
