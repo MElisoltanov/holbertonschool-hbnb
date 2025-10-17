@@ -134,7 +134,7 @@ class HBnBFacade:
             review.rating = rating
 
         self.review_repo.update(review_id, review)
-        return Review
+        return review
 
     def delete_review(self, review_id):
         review = self.review_repo.get(review_id)
