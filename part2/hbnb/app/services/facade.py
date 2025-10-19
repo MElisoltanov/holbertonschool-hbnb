@@ -15,20 +15,28 @@ class HBnBFacade:
         pass
 
     def create_place(self, place_data):
-        owner = User(first_name="Temp", last_name="User", email="temp@example.com")
+        # Validate owner exists instead of creating a temporary user
+        owner_id = place_data.get("owner_id")
+        if not owner_id:
+            raise ValueError("owner_id is required")
+        owner = self.user_repo.get(owner_id)
+        if not owner:
+            raise ValueError("Owner not found")
+
+        amenities = place_data.get("amenities") or []
 
         new_place = Place(
-                            place_data.get("title"),
-                            place_data.get("description"),
-                            place_data.get("price"),
-                            place_data.get("latitude"),
-                            place_data.get("longitude"),
-                            place_data.get("owner_id"),
-                            place_data.get("amenities")
+            place_data.get("title"),
+            place_data.get("description"),
+            place_data.get("price"),
+            place_data.get("latitude"),
+            place_data.get("longitude"),
+            owner_id,
+            amenities
         )
 
         self.place_repo.add(new_place)
-        return (new_place)
+        return new_place
 
     def get_place(self, place_id):
         place = self.place_repo.get(place_id)
@@ -84,7 +92,8 @@ class HBnBFacade:
             return None
         for key, value in amenity_data.items():
             setattr(amenity, key, value)
-        self.amenity_repo.update(amenity.id, amenity)
+        # pass a dict to repository.update for consistency
+        self.amenity_repo.update(amenity.id, {'name': amenity.name})
         return amenity
 
     """Review facade"""
@@ -133,7 +142,8 @@ class HBnBFacade:
                 raise ValueError("Rating must be between 1 and 5.")
             review.rating = rating
 
-        self.review_repo.update(review_id, review)
+        # pass a dict (not the object) to repository.update to match its contract
+        self.review_repo.update(review_id, {'text': review.text, 'rating': review.rating})
         return review
 
     def delete_review(self, review_id):
