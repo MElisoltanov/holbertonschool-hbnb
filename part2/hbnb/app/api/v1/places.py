@@ -1,9 +1,8 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from app.services.facade import HBnBFacade
+from app.services import facade  # use shared facade instance
 
 api = Namespace('places', description='Place operations')
-facade = HBnBFacade()
 
 amenity_model = api.model('PlaceAmenity', {
     'id': fields.String(description='Amenity ID'),
@@ -75,8 +74,6 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {"error": "Place not found"}, 404
-
-        amenities = []
 
         amenities = []
         for amenity_id in place.amenities:
