@@ -1,5 +1,5 @@
 from app.persistence.repository import InMemoryRepository
-from app.persistence.sqlalchemy_repository import SQLAlchemyRepository
+from app.persistence.repository import SQLAlchemyRepository
 from app.models.user import User
 from app.models.place import Place
 from app.models.user import User
