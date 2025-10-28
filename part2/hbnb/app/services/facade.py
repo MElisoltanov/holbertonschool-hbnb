@@ -3,18 +3,28 @@ from app.models.place import Place
 from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.review import Review
+<<<<<<< HEAD
 class HBnBFacade:
         
+=======
+
+
+class HBnBFacade:
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
     user_repo = InMemoryRepository()
     place_repo = InMemoryRepository()
     review_repo = InMemoryRepository()
     amenity_repo = InMemoryRepository()
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
     def __init__(self):
         pass
 
     def create_place(self, place_data):
+<<<<<<< HEAD
         owner = User(first_name="Temp", last_name="User", email="temp@example.com")
 
         new_place = Place( 
@@ -31,6 +41,31 @@ class HBnBFacade:
         return (new_place)
     
     """Places facade"""
+=======
+        # Validate owner exists instead of creating a temporary user
+        owner_id = place_data.get("owner_id")
+        if not owner_id:
+            raise ValueError("owner_id is required")
+        owner = self.user_repo.get(owner_id)
+        if not owner:
+            raise ValueError("Owner not found")
+
+        amenities = place_data.get("amenities") or []
+
+        new_place = Place(
+            place_data.get("title"),
+            place_data.get("description"),
+            place_data.get("price"),
+            place_data.get("latitude"),
+            place_data.get("longitude"),
+            owner_id,
+            amenities
+        )
+
+        self.place_repo.add(new_place)
+        return new_place
+
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
     def get_place(self, place_id):
         place = self.place_repo.get(place_id)
         if not place:
@@ -48,11 +83,18 @@ class HBnBFacade:
         for key, value in place_data.items():
             if hasattr(place, key):
                 setattr(place, key, value)
+<<<<<<< HEAD
 
         return place
     
     """user facade"""
         # Placeholder method for creating a user
+=======
+        return place
+
+    """user facade"""
+
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
     def create_user(self, user_data):
         user = User(**user_data)
         self.user_repo.add(user)
@@ -66,7 +108,11 @@ class HBnBFacade:
 
     def get_all_users(self):
         return self.user_repo.get_all()
+<<<<<<< HEAD
     
+=======
+
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
     """Amenity facade """
 
     def create_amenity(self, amenity_data):
@@ -79,16 +125,27 @@ class HBnBFacade:
 
     def get_all_amenities(self):
         return self.amenity_repo.get_all()
+<<<<<<< HEAD
         
+=======
+
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
     def update_amenity(self, amenity_id, amenity_data):
         amenity = self.amenity_repo.get(amenity_id)
         if not amenity:
             return None
         for key, value in amenity_data.items():
             setattr(amenity, key, value)
+<<<<<<< HEAD
         self.amenity_repo.update(amenity.id, amenity)
         return amenity
     
+=======
+        # pass a dict to repository.update for consistency
+        self.amenity_repo.update(amenity.id, {'name': amenity.name})
+        return amenity
+
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
     """Review facade"""
 
     def create_review(self, review_data):
@@ -108,7 +165,11 @@ class HBnBFacade:
         if not (1 <= rating <= 5):
             raise ValueError("Rating must be between 1 and 5")
 
+<<<<<<< HEAD
         review = Review(text=text, rating=rating, user_id=user_id, place_id= place_id)
+=======
+        review = Review(text=text, rating=rating, user_id=user_id, place_id=place_id)
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
         self.review_repo.add(review)
         return review
 
@@ -128,6 +189,7 @@ class HBnBFacade:
             return None
 
         if 'text' in review_data:
+<<<<<<< HEAD
             text = review_data['text']
             if not text or not isinstance(text, str):
                 raise ValueError("Text must be a non-empty string.")
@@ -140,6 +202,17 @@ class HBnBFacade:
             review.rating = rating
 
         self.review_repo.update(review_id, review)
+=======
+            review.text = review_data['text']
+        if 'rating' in review_data:
+            rating = review_data['rating']
+            if not (1 <= rating <= 5):
+                raise ValueError("Rating must be between 1 and 5.")
+            review.rating = rating
+
+        # pass a dict (not the object) to repository.update to match its contract
+        self.review_repo.update(review_id, {'text': review.text, 'rating': review.rating})
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
         return review
 
     def delete_review(self, review_id):

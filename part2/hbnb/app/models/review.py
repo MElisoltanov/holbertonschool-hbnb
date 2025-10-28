@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 from .BaseModel import BaseModel
+=======
+from app.models.BaseModel import BaseModel
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
 
 
 class Review(BaseModel):
@@ -25,10 +29,17 @@ class Review(BaseModel):
             "place_id": self.place_id,
             "text": self.text,
             "rating": self.rating,
+<<<<<<< HEAD
             
+=======
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
         }
 
     def __str__(self):
         return "Review(id={}, rating={}, place_id={}, user_id={})".format(
+<<<<<<< HEAD
             self.id, self.rating, self.place_id, self.user_id
         )
+=======
+            self.id, self.rating, self.place_id, self.user_id)
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1

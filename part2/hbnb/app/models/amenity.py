@@ -9,6 +9,10 @@ class Amenity(BaseModel):
         self.set_name(name)
 
     def set_name(self, name):
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
         if not name:
             raise ValueError("Amenity name is required.")
         if len(name) > 50:

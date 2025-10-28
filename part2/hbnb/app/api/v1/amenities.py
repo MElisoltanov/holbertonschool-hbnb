@@ -1,12 +1,19 @@
 from flask_restx import Namespace, Resource, fields
+<<<<<<< HEAD
 from app.services.facade import HBnBFacade
+=======
+from app.services import facade
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
 from flask import request
 
 
 api = Namespace('amenities', description='Amenity operations')
 
+<<<<<<< HEAD
 facade = HBnBFacade()
 
+=======
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
 # Define the amenity model for input validation and documentation
 amenity_model = api.model('Amenity', {
     'name': fields.String(required=True, description='Name of the amenity')
@@ -47,7 +54,10 @@ class AmenityResource(Resource):
             api.abort(404, "Amenity with id{} not found".format(amenity_id))
         return amenity.to_dict(), 200
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
     @api.expect(amenity_model)
     @api.response(200, 'Amenity updated successfully')
     @api.response(404, 'Amenity not found')
@@ -58,7 +68,11 @@ class AmenityResource(Resource):
         if not data or 'name' not in data:
             api.abort(400, "Missing required field: name")
         try:
+<<<<<<< HEAD
             updated_amenity = facade.update_amenity(amenity_id,{'name': data['name']})
+=======
+            updated_amenity = facade.update_amenity(amenity_id, {'name': data['name']})
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
             if not updated_amenity:
                 api.abort(
                     404,

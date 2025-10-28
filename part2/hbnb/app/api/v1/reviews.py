@@ -12,6 +12,10 @@ review_model = api.model('Review', {
     'place_id': fields.String(required=True, description='ID of the place')
 })
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
 @api.route('/')
 class ReviewList(Resource):
     @api.expect(review_model)
@@ -22,17 +26,30 @@ class ReviewList(Resource):
         data = request.json
         try:
             review = facade.create_review(data)
+<<<<<<< HEAD
             return review.to_dict(),201
         except ValueError as e:
             return {"message": str(e)}, 400
 
         
     api.response(200, 'List of reviews retrieved successfully')
+=======
+            return review.to_dict(), 201
+        except ValueError as e:
+            return {"message": str(e)}, 400
+
+    api.response(200, 'List of reviews retrieved successfully')
+
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
     def get(self):
         """Retrieve a list of all reviews"""
         reviews = facade.get_all_reviews()
         return [r.to_dict() for r in reviews], 200
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
 @api.route('/<review_id>')
 class ReviewResource(Resource):
     @api.response(200, 'Review details retrieved successfully')
@@ -68,6 +85,10 @@ class ReviewResource(Resource):
             return {"message": "Review not found"}, 404
         return {"message": "Review deleted successfully"}, 200
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
 @api.route('/places/<place_id>/reviews')
 class PlaceReviewList(Resource):
     @api.response(200, 'List of reviews for the place retrieved successfully')
@@ -76,6 +97,10 @@ class PlaceReviewList(Resource):
         """Get all reviews for a specific place"""
         place = facade.place_repo.get(place_id)
         if not place:
+<<<<<<< HEAD
             return{"message": "Place not found"}, 404
+=======
+            return {"message": "Place not found"}, 404
+>>>>>>> 8f49bfc437256fd86f415bc5296caa75e64161e1
         reviews = facade.get_reviews_by_place(place_id)
         return [r.to_dict() for r in reviews], 200
