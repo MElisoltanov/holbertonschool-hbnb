@@ -5,11 +5,18 @@ from app.services import facade
 
 api = Namespace('users', description='User operations')
 
+# Full model for creating a user
 user_model = api.model('User', {
     'first_name': fields.String(required=True, description='First name of the user'),
     'last_name': fields.String(required=True, description='Last name of the user'),
     'email': fields.String(required=True, description='Email of the user'),
     'password': fields.String(required=True, description='Password of the user')
+})
+
+# Model for updating user (without email and password)
+user_update_model = api.model('UserUpdate', {
+    'first_name': fields.String(description='First name of the user'),
+    'last_name': fields.String(description='Last name of the user')
 })
 
 
@@ -45,23 +52,29 @@ class UserResource(Resource):
             return {"message": "User not found"}, 404
         return user.to_dict(), 200
 
-    @api.expect(user_model)
+    @api.expect(user_update_model)
     @jwt_required()
     @api.response(200, 'User updated successfully')
     @api.response(400, 'Invalid input data')
     @api.response(403, 'Unauthorized action')
     @api.response(404, 'User not found')
     def put(self, user_id):
-        """Update user info (except email and password)"""
+        """Update user info (first_name / last_name only)"""
         current_user = get_jwt_identity()
-        if current_user != user_id:
+        if str(current_user) != str(user_id):
             return {"error": "Unauthorized action"}, 403
 
-        data = request.json
-        if "email" in data or "password" in data:
-            return {"error": "You cannot modify email or password"}, 400
+        data = request.json or {}
 
-        updated_user = facade.update_user(user_id, data)
+        # Do nothing if no updatable fields are provided
+        if not any(k in data for k in ['first_name', 'last_name']):
+            return {"error": "No valid fields to update"}, 400
+
+        try:
+            updated_user = facade.update_user(user_id, data)
+        except ValueError as e:
+            return {"message": str(e)}, 400
+
         if not updated_user:
             return {"message": "User not found"}, 404
 

@@ -1,5 +1,5 @@
 from app.persistence.user_repository import UserRepository
-from app.persistence.repository import InMemoryRepository
+from app.persistence.repository import SQLAlchemyRepository
 from app.models.user import User
 from app.models.place import Place
 from app.models.amenity import Amenity
@@ -9,10 +9,9 @@ class HBnBFacade:
     def __init__(self):
 
         self.user_repo = UserRepository()
-        # Les autres restent en mémoire pour l'instant
-        self.place_repo = InMemoryRepository()
-        self.review_repo = InMemoryRepository()
-        self.amenity_repo = InMemoryRepository()
+        self.place_repo = SQLAlchemyRepository(Place)
+        self.review_repo = SQLAlchemyRepository(Review)
+        self.amenity_repo = SQLAlchemyRepository(Amenity)
 
     # =====================
     # User facade
@@ -43,7 +42,10 @@ class HBnBFacade:
         if not owner:
             raise ValueError("Owner not found")
 
+        # transformed ID into objects Amenity
         amenities = place_data.get("amenities") or []
+        amenities_objs = [self.amenity_repo.get(a_id) for a_id in amenities_ids]
+
 
         new_place = Place(
             place_data.get("title"),
@@ -52,7 +54,7 @@ class HBnBFacade:
             place_data.get("latitude"),
             place_data.get("longitude"),
             owner_id,
-            amenities
+            amenities_objs
         )
         self.place_repo.add(new_place)
         return new_place

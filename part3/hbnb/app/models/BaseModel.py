@@ -2,24 +2,22 @@ from app import db
 import uuid
 from datetime import datetime
 
+class BaseModel(db.Model):
+    __abstract__ = True
 
-class BaseModel:
-   __abstract__ = True
-
-   id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid()))
+    id = db.Column(db.String(36), primary_key=True, default=lambda: str(uuid.uuid4()))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
-    updated_at = db.Column(db.DataTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+
     def save(self):
-        """
-        Update the updated_at timestamp whenever the object is modified
-        """
-        self.updated_at = datetime.now()
+        """Update the updated_at timestamp and commit."""
+        self.updated_at = datetime.utcnow()
+        db.session.add(self)
+        db.session.commit()
 
     def update(self, data):
-        """
-        Update the attributes of the object based on the provided dictionary
-        """
+        """Update attributes based on a dictionary and commit."""
         for key, value in data.items():
             if hasattr(self, key):
                 setattr(self, key, value)
-        self.save()  # Update the updated_at timestamp
+        self.save()

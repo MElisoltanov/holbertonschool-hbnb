@@ -1,7 +1,13 @@
 from app.models.BaseModel import BaseModel
+from app import db
 
 
-class Amenity(BaseModel):
+
+class Amenity(BaseModel, db.Model):
+    __tablename__ = 'amenities'
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), nullable=False)
 
     def __init__(self, name):
 
@@ -15,7 +21,7 @@ class Amenity(BaseModel):
         if len(name) > 50:
             raise ValueError("Amenity name must be 50 characters or fewer.")
         self.name = name
-        self.save()  # Update updated_at timestamp from BaseModel
+
 
     def to_dict(self):
         return {

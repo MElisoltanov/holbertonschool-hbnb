@@ -1,7 +1,17 @@
 from app.models.BaseModel import BaseModel
+from app import db
 
 
-class Review(BaseModel):
+class Review(BaseModel, db.Model):
+    __tablename__ = "reviews"
+    text = db.Column(db.String(1024), nullable=False)
+    rating = db.Column(db.Integer, nullable=False, default=5)
+
+    # add two foreign key link to user_id and place_id
+
+    user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    place_id = db.Column(db.Integer, db.ForeignKey('places.id'), nullable=False)
+
 
     def __init__(self, user_id, place_id, text, rating=5, **kwargs):
 
