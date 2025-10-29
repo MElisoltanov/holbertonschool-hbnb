@@ -1,5 +1,8 @@
 from app.persistence.repository import InMemoryRepository
 from app.persistence.repository import SQLAlchemyRepository
+
+from app.Extensions import db
+
 from app.models.user import User
 from app.models.place import Place
 from app.models.user import User
@@ -8,13 +11,13 @@ from app.models.review import Review
 
 
 class HBnBFacade:
-    user_repo = InMemoryRepository()
-    place_repo = InMemoryRepository()
-    review_repo = InMemoryRepository()
-    amenity_repo = InMemoryRepository()
 
     def __init__(self):
-        self.user_repo = SQLAlchemyRepository(User)
+        self.user_repo = InMemoryRepository()
+
+        self.place_repo = InMemoryRepository()
+        self.review_repo = InMemoryRepository()
+        self.amenity_repo = InMemoryRepository()
 
     def create_place(self, place_data):
         owner = User(first_name="Temp", last_name="User", email="temp@example.com")
@@ -148,16 +151,3 @@ class HBnBFacade:
             return False
         self.review_repo.delete(review_id)
         return True
-
-    def __init__(self):
-        self.user_repo = SQLAlchemyRepository(User)
-
-        # For now, other repos remain in-memory
-        from app.persistence.repository import InMemoryRepository
-        from app.models.place import Place
-        from app.models.review import Review
-        from app.models.amenity import Amenity
-
-        self.place_repo = InMemoryRepository()
-        self.review_repo = InMemoryRepository()
-        self.amenity_repo = InMemoryRepository()

@@ -1,5 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
+from flask_jwt_extended import jwt_required, get_jwt_identity
 from app.services.facade import HBnBFacade
 
 api = Namespace('places', description='Place operations')
@@ -30,16 +31,27 @@ place_model = api.model('Place',
 
 @api.route('/')
 class PlaceList(Resource):
+    @jwt_required()
     @api.expect(place_model)
     @api.response(201, 'Place created successfully')
     @api.response(400, 'Invalid data')
+
     def post(self):
         """Create a new place"""
-     
+        current_user_id = get_jwt_identity()
         data = request.json
-        owner = facade.get_user(data["owner_id"])
+
+        #owner = facade.get_user(data["owner_id"])
+        data["owner_id"] = current_user_id
+        
+        required_fields = ["title", "price", "latitude", "longitude"]
+        for field in required_fields:
+            if field not in data:
+                return {"error": f"Missing field: {field}"}, 400
+
+        owner = facade.get_user(current_user_id)
         if not owner:
-            return {"Error": "invalid owner"}, 400
+            return {"error": "Invalid owner"}, 400       
 
         place = facade.create_place(data)
         return ({
@@ -103,22 +115,29 @@ class PlaceResource(Resource):
             "amenities":amenities
         })
 
+    @jwt_required()
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
+    @api.response(403, 'Unauthorized action')
     @api.response(404, 'Place not found')
     def put(self, place_id):
         """Update place info"""
         data = api.payload
+        current_user = get_jwt_identity()
 
         place = facade.get_place(place_id)
         if not place:
             return{"Error": "Place not found"}, 404
         
+        if place.owner_id != current_user:
+            return {"error": "Unauthorized action"}, 403
+        
         owner = facade.get_user(data["owner_id"])
         if not owner:
             return {"Error": "Invalid owner"}, 400
 
+        data.pop("owner_id", None)
+        
         facade.update_place(place_id, data)
-
         return {"message": "Place updated successfully"}, 200
  

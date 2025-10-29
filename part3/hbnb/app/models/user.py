@@ -1,10 +1,19 @@
 from app.models.BaseModel import BaseModel
-
+from app.Extensions import db, bcrypt
+import uuid
 
 class User(BaseModel):
-    _emails = set()
+    __tablename__ = "users"
 
-    def __init__(self, first_name, last_name, email, is_admin=False):
+    first_name = db.Column(db.String(50), nullable=False)
+    last_name = db.Column(db.String(50), nullable=False)
+    email = db.Column(db.String(100), unique=True, nullable=False)
+    password = db.Column(db.String(128), nullable=False)
+    is_admin = db.Column(db.Boolean, default=False)
+
+    #_emails = set()
+
+    def __init__(self, first_name, last_name, email, password, is_admin=False):
         super().__init__()
 
         if not first_name or len(first_name) > 50:
@@ -18,12 +27,21 @@ class User(BaseModel):
         if '@' not in email or '.' not in email.split('@')[-1]:
             raise ValueError("email must be a valid email address")
 
-        if email in User._emails:
-            raise ValueError("email must be unique")
+        #if email in User._emails:
+            #raise ValueError("email must be unique")
 
-        User._emails.add(email)
+        #User._emails.add(email)
 
         self.first_name = first_name
         self.last_name = last_name
         self.email = email
         self.is_admin = is_admin
+        self.hash_password(password)
+
+    def hash_password(self, password):
+            """Hashes the password before storing it."""
+            self.password = bcrypt.generate_password_hash(password).decode('utf-8')
+
+    def verify_password(self, password):
+            """Verifies if the provided password matches the hashed password."""
+            return bcrypt.check_password_hash(self.password, password)
