@@ -21,6 +21,7 @@ class User(BaseModel):
 
         if not last_name or len(last_name) > 50:
             raise ValueError("last_name is required and must be <= 50 characters")
+        
         if not email or len(email) > 100:
             raise ValueError("email is required and must be <= 100 characters")
 

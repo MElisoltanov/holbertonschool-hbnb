@@ -5,7 +5,6 @@ from app.Extensions import db
 
 from app.models.user import User
 from app.models.place import Place
-from app.models.user import User
 from app.models.amenity import Amenity
 from app.models.review import Review
 
@@ -20,8 +19,7 @@ class HBnBFacade:
         self.amenity_repo = InMemoryRepository()
 
     def create_place(self, place_data):
-        owner = User(first_name="Temp", last_name="User", email="temp@example.com")
-
+        
         new_place = Place( 
         place_data.get("title"),
         place_data.get("description"),

@@ -5,10 +5,16 @@ from datetime import datetime
 class BaseModel(db.Model):
     __abstract__ = True
 
+    
     id = db.Column(db.String(60), primary_key=True, default=lambda: str(uuid.uuid4()))
     created_at = db.Column(db.DateTime, default=datetime.utcnow)
     updated_at = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
 
+    def __init__(self):
+        self.id = str(uuid.uuid4())
+        self.created_at = datetime.now()
+        self.updated_at = datetime.now()
+    
     def save(self):
         """
         Update the updated_at timestamp whenever the object is modified
@@ -16,7 +22,7 @@ class BaseModel(db.Model):
         db.session.add(self)
         db.session.commit()
 
-        #self.updated_at = datetime.now()
+        #sed_at = datetime.now()elf.updat
 
     def update(self, data):
         """

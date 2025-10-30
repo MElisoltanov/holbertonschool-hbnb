@@ -1,10 +1,9 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_identity
-from app.services.facade import HBnBFacade
+from app.services import facade
 
 api = Namespace('places', description='Place operations')
-facade = HBnBFacade()
 
 amenity_model = api.model('PlaceAmenity', {
     'id': fields.String(description='Amenity ID'),
@@ -42,15 +41,17 @@ class PlaceList(Resource):
         data = request.json
 
         #owner = facade.get_user(data["owner_id"])
-        data["owner_id"] = current_user_id
-        
+        #data["owner_id"] = current_user_id
+        print(current_user_id)
+        print(data["owner_id"])
         required_fields = ["title", "price", "latitude", "longitude"]
         for field in required_fields:
             if field not in data:
                 return {"error": f"Missing field: {field}"}, 400
 
-        owner = facade.get_user(current_user_id)
+        owner = facade.get_user(data["owner_id"]) ######
         if not owner:
+            print(owner)
             return {"error": "Invalid owner"}, 400       
 
         place = facade.create_place(data)
