@@ -1,5 +1,5 @@
 from abc import ABC, abstractmethod
-
+from app.Extensions import db
 
 class Repository(ABC):
     @abstractmethod
@@ -28,6 +28,7 @@ class Repository(ABC):
 
 
 class InMemoryRepository(Repository):
+    """In-memory repository for development/testing"""
     def __init__(self):
         self._storage = {}
 
@@ -43,17 +44,7 @@ class InMemoryRepository(Repository):
     def update(self, obj_id, data):
         obj = self.get(obj_id)
         if obj:
-            # If data is a dict, use BaseModel.update path
-            if isinstance(data, dict):
-                obj.update(data)
-            else:
-                # Assume data is an object: copy known attributes
-                for key, value in vars(data).items():
-                    if hasattr(obj, key):
-                        setattr(obj, key, value)
-                # ensure updated_at is updated
-                if hasattr(obj, "save"):
-                    obj.save()
+            obj.update(data)
 
     def delete(self, obj_id):
         if obj_id in self._storage:
@@ -61,3 +52,40 @@ class InMemoryRepository(Repository):
 
     def get_by_attribute(self, attr_name, attr_value):
         return next((obj for obj in self._storage.values() if getattr(obj, attr_name) == attr_value), None)
+
+
+class SQLAlchemyRepository(Repository):
+    """Generic SQLAlchemy repository for CRUD operations."""
+    def __init__(self, model):
+        self.model = model
+
+    def add(self, obj):
+        db.session.add(obj)
+        db.session.commit()
+        return obj
+
+    def get(self, obj_id):
+        return self.model.query.get(obj_id)
+
+    def get_all(self):
+        return self.model.query.all()
+
+    def update(self, obj_id, data):
+        obj = self.get(obj_id)
+        if not obj:
+            return None
+        for key, value in data.items():
+            setattr(obj, key, value)
+        db.session.commit()
+        return obj
+
+    def delete(self, obj_id):
+        obj = self.get(obj_id)
+        if obj:
+            db.session.delete(obj)
+            db.session.commit()
+            return True
+        return False
+
+    def get_by_attribute(self, attr_name, attr_value):
+        return self.model.query.filter_by(**{attr_name: attr_value}).first()
