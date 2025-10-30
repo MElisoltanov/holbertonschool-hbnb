@@ -27,10 +27,14 @@ class User(BaseModel):
         if '@' not in email or '.' not in email.split('@')[-1]:
             raise ValueError("email must be a valid email address")
 
-        #if email in User._emails:
-            #raise ValueError("email must be unique")
+        """if email in User._email:
+            raise ValueError("email must be unique")
 
-        #User._emails.add(email)
+        User._email.add(email)"""
+        existing_user = User.query.filter_by(email=email).first()
+        if existing_user:
+            raise ValueError("Email already exists")
+
 
         self.first_name = first_name
         self.last_name = last_name
@@ -45,3 +49,14 @@ class User(BaseModel):
     def verify_password(self, password):
             """Verifies if the provided password matches the hashed password."""
             return bcrypt.check_password_hash(self.password, password)
+
+    def to_dict(self):
+        return {
+        "id": str(self.id),
+        "first_name": self.first_name,
+        "last_name": self.last_name,
+        "email": self.email,
+        "is_admin": self.is_admin,
+        "created_at": self.created_at.isoformat() if hasattr(self, 'created_at') else None,
+        "updated_at": self.updated_at.isoformat() if hasattr(self, 'updated_at') else None
+    }

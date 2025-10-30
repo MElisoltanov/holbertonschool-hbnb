@@ -44,7 +44,7 @@ class HBnBFacade:
 
         # transformed ID into objects Amenity
         amenities = place_data.get("amenities") or []
-        amenities_objs = [self.amenity_repo.get(a_id) for a_id in amenities_ids]
+        amenities_objs = [self.amenity_repo.get(a_id) for a_id in amenities]
 
 
         new_place = Place(

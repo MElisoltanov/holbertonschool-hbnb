@@ -1,5 +1,5 @@
 from app.models.BaseModel import BaseModel
-from app import db
+from app.Extensions import db, bcrypt
 
 
 

@@ -1,4 +1,4 @@
-from app import db
+from app.Extensions import db, bcrypt
 import uuid
 from datetime import datetime
 
