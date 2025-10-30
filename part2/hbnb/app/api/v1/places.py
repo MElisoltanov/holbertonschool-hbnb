@@ -1,6 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from app.services import facade  # use shared facade instance
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
+from app.services import facade
 
 api = Namespace('places', description='Place operations')
 
@@ -16,53 +17,55 @@ user_model = api.model('PlaceUser', {
     'email': fields.String(description='Email of the owner')
 })
 
-place_model = api.model('Place',
-    {
-        'title': fields.String(required=True),
-        'description': fields.String(),
-        'price': fields.Float(required=True),
-        'latitude': fields.Float(required=True),
-        'longitude': fields.Float(required=True),
-        'owner_id': fields.String(required=True),
-        'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
-    })
+place_model = api.model('Place', {
+    'title': fields.String(required=True),
+    'description': fields.String(),
+    'price': fields.Float(required=True),
+    'latitude': fields.Float(required=True),
+    'longitude': fields.Float(required=True),
+    'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
+})
 
 
 @api.route('/')
 class PlaceList(Resource):
+    @api.response(200, 'List of places')
+    def get(self):
+        """List all places (public)"""
+        places = facade.get_all_places()
+        return [{
+            "id": p.id,
+            "title": p.title,
+            "price": p.price,
+            "latitude": p.latitude,
+            "longitude": p.longitude
+        } for p in places]
+
     @api.expect(place_model)
     @api.response(201, 'Place created successfully')
     @api.response(400, 'Invalid data')
+    @jwt_required()
     def post(self):
-        """Create a new place"""
-
+        """Create a new place (authenticated users only)"""
+        current_user_id = get_jwt_identity()
         data = request.json
-        owner = facade.get_user(data["owner_id"])
-        if not owner:
-            return {"Error": "invalid owner"}, 400
+        data['owner_id'] = current_user_id
 
-        place = facade.create_place(data)
-        return ({
-                    "id": place.id,
-                    "title": place.title,
-                    "price": place.price,
-                    "latitude": place.latitude,
-                    "longitude": place.longitude
-                }), 201
+        for amenity_id in data.get('amenities', []):
+            if not facade.get_amenity(amenity_id):
+                return {"message": f"Amenity {amenity_id} does not exist"}, 400
 
-    @api.response(200, 'List of places')
-    def get(self):
-        """List all places"""
-        places = facade.get_all_places()
-        return ([
-            {
-                "id": p.id,
-                "title": p.title,
-                "price": p.price,
-                "latitude": p.latitude,
-                "longitude": p.longitude
-            } for p in places
-        ])
+        try:
+            place = facade.create_place(data)
+            return {
+                "id": place.id,
+                "title": place.title,
+                "price": place.price,
+                "latitude": place.latitude,
+                "longitude": place.longitude
+            }, 201
+        except ValueError as e:
+            return {"error": str(e)}, 400
 
 
 @api.route('/<string:place_id>')
@@ -70,7 +73,7 @@ class PlaceResource(Resource):
     @api.response(200, 'Place details retrieved')
     @api.response(404, 'Place not found')
     def get(self, place_id):
-        """Get a specific place"""
+        """Get a specific place (public)"""
         place = facade.get_place(place_id)
         if not place:
             return {"error": "Place not found"}, 404
@@ -79,13 +82,10 @@ class PlaceResource(Resource):
         for amenity_id in place.amenities:
             amenity = facade.get_amenity(amenity_id)
             if amenity:
-                amenities.append({
-                    "id": amenity.id,
-                    "name": amenity.name
-                            })
+                amenities.append({"id": amenity.id, "name": amenity.name})
 
         owner = facade.get_user(place.owner_id)
-        return ({
+        return {
             "id": place.id,
             "title": place.title,
             "description": place.description,
@@ -94,28 +94,59 @@ class PlaceResource(Resource):
             "longitude": place.longitude,
             "owner": {
                 "id": owner.id,
-                "first name": owner.first_name,
-                "last name": owner.last_name,
+                "first_name": owner.first_name,
+                "last_name": owner.last_name,
                 "email": owner.email
-                    },
+            },
             "amenities": amenities
-        })
+        }
 
     @api.expect(place_model)
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
+    @api.response(403, 'Unauthorized')
+    @jwt_required()
     def put(self, place_id):
-        """Update place info"""
-        data = api.payload
-
+        """Update place info (owner or admin)"""
+        current_user_id = get_jwt_identity()
+        claims = get_jwt()
+        
         place = facade.get_place(place_id)
         if not place:
-            return {"Error": "Place not found"}, 404
+            return {"error": "Place not found"}, 404
 
-        owner = facade.get_user(data["owner_id"])
-        if not owner:
-            return {"Error": "Invalid owner"}, 400
+        # Admin can modify any place, regular users only their own
+        if not claims.get('is_admin') and place.owner_id != current_user_id:
+            return {"error": "Unauthorized action"}, 403
 
-        facade.update_place(place_id, data)
+        data = api.payload
+        data.pop("owner_id", None)
 
-        return {"message": "Place updated successfully"}, 200
+        for amenity_id in data.get('amenities', []):
+            if not facade.get_amenity(amenity_id):
+                return {"message": f"Amenity {amenity_id} does not exist"}, 400
+
+        try:
+            facade.update_place(place_id, data)
+            return {"message": "Place updated successfully"}, 200
+        except ValueError as e:
+            return {"error": str(e)}, 400
+
+    @api.response(200, 'Place deleted successfully')
+    @api.response(404, 'Place not found')
+    @api.response(403, 'Unauthorized')
+    @jwt_required()
+    def delete(self, place_id):
+        """Delete a place (owner or admin)"""
+        current_user_id = get_jwt_identity()
+        claims = get_jwt()
+        
+        place = facade.get_place(place_id)
+        if not place:
+            return {"error": "Place not found"}, 404
+
+        if not claims.get('is_admin') and place.owner_id != current_user_id:
+            return {"error": "Unauthorized action"}, 403
+
+        facade.delete_place(place_id)
+        return {"message": "Place deleted successfully"}, 200
