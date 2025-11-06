@@ -40,7 +40,6 @@ def create_app(config_class=DevelopmentConfig):
         description='HBnB Application API',
         doc='/api/v1/',
         authorizations=authorizations,
-        security='Bearer'
     )
 
     # Register namespaces
