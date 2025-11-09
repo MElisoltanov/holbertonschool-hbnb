@@ -1,11 +1,16 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade
 
+# -----------------------
+# NAMESPACE
+# -----------------------
 api = Namespace('reviews', description='Review operations')
 
-# Model for input validation (no user_id, it's taken from JWT)
+# -----------------------
+# REVIEW MODEL
+# -----------------------
 review_model = api.model('Review', {
     'text': fields.String(required=True, description='Text of the review'),
     'rating': fields.Integer(required=True, description='Rating of the place (1-5)'),
@@ -24,6 +29,9 @@ class ReviewList(Resource):
     def post(self):
         """Register a new review"""
         current_user_id = get_jwt_identity()
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+
         data = request.json
         data['user_id'] = current_user_id  # force user_id
 
@@ -31,11 +39,12 @@ class ReviewList(Resource):
         if not place:
             return {"message": "Place not found"}, 404
 
-        if place.owner_id == current_user_id:
+        # Only non-admins are restricted from reviewing their own places
+        if place.owner_id == current_user_id and not is_admin:
             return {"message": "You cannot review your own place."}, 400
 
         existing_review = facade.get_user_review_for_place(current_user_id, data['place_id'])
-        if existing_review:
+        if existing_review and not is_admin:
             return {"message": "You have already reviewed this place."}, 400
 
         review = facade.create_review(data)
@@ -66,16 +75,20 @@ class ReviewResource(Resource):
     @api.response(403, 'Unauthorized')
     @jwt_required()
     def put(self, review_id):
-        """Update a review (only by the author)"""
+        """Update a review (author or admin)"""
         current_user_id = get_jwt_identity()
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+
         review = facade.get_review(review_id)
         if not review:
             return {"message": "Review not found"}, 404
-        if review.user_id != current_user_id:
+
+        if review.user_id != current_user_id and not is_admin:
             return {"message": "Unauthorized action"}, 403
 
         data = request.json
-        review = facade.update_review(review_id, data)
+        updated_review = facade.update_review(review_id, data)
         return {"message": "Review updated successfully"}, 200
 
     @api.response(200, 'Review deleted successfully')
@@ -83,12 +96,16 @@ class ReviewResource(Resource):
     @api.response(403, 'Unauthorized')
     @jwt_required()
     def delete(self, review_id):
-        """Delete a review (only by the author)"""
+        """Delete a review (author or admin)"""
         current_user_id = get_jwt_identity()
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+
         review = facade.get_review(review_id)
         if not review:
             return {"message": "Review not found"}, 404
-        if review.user_id != current_user_id:
+
+        if review.user_id != current_user_id and not is_admin:
             return {"message": "Unauthorized action"}, 403
 
         facade.delete_review(review_id)
