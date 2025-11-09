@@ -79,3 +79,18 @@ class UserResource(Resource):
             return {"message": "User not found"}, 404
 
         return {"message": "User updated successfully"}, 200
+#new content...AAAA
+    """@api.route('/users/')
+    @jwt_required()
+    def post(self):
+        current_user = get_jwt_identity()
+        if not current_user.get('is_admin'):
+            return {'error': 'Admin privileges required'}, 403
+
+        user_data = request.json
+        email = user_data.get('email')
+
+        # Check if email is already in use
+        if facade.get_user_by_email(email):
+            return {'error': 'Email already registered'}, 400
+"""

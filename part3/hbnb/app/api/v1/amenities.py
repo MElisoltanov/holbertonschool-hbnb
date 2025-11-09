@@ -1,6 +1,7 @@
 from flask_restx import Namespace, Resource, fields
 from app.services import facade
 from flask import request
+from flask_jwt_extended import jwt_required, get_jwt_identity
 
 
 api = Namespace('amenities', description='Amenity operations')
@@ -63,3 +64,11 @@ class AmenityResource(Resource):
             return updated_amenity.to_dict(), 200
         except Exception as e:
             api.abort(400, str(e))
+#new content...
+    """ @api.route('/amenities/')
+    @jwt_required()
+    def post(self):
+        current_user = get_jwt_identity()
+        if not current_user.get('is_admin'):
+            return {'error': 'Admin privileges required'}, 403
+    """
