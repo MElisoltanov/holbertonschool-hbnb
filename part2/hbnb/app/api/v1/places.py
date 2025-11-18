@@ -26,7 +26,6 @@ place_model = api.model('Place', {
     'amenities': fields.List(fields.String, required=True, description="List of amenities ID's")
 })
 
-
 @api.route('/')
 class PlaceList(Resource):
     @api.response(200, 'List of places')
@@ -67,7 +66,6 @@ class PlaceList(Resource):
         except ValueError as e:
             return {"error": str(e)}, 400
 
-
 @api.route('/<string:place_id>')
 class PlaceResource(Resource):
     @api.response(200, 'Place details retrieved')
@@ -77,7 +75,7 @@ class PlaceResource(Resource):
         place = facade.get_place(place_id)
         if not place:
             return {"error": "Place not found"}, 404
-
+        
         amenities = []
         for amenity_id in place.amenities:
             amenity = facade.get_amenity(amenity_id)

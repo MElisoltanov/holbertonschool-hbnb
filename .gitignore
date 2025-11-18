@@ -28,3 +28,9 @@ build/
 
 # fichiers de test
 tests/
+
+.venv/
+__pycache__/
+*.pyc
+instance/
+*.db
