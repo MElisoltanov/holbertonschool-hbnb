@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login</title>
+
+    <link rel="stylesheet" href="../static/css/styles.css">
+    <link rel="icon" href="../images/icon.png">
+
+    <!-- Vintage Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@600&family=Cormorant+Garamond:wght@400;600&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            background: #a795760b url('https://plus.unsplash.com/premium_photo-1667761637876-e704c906927d?fm=jpg&q=60&w=3000&ixlib=rb-4.1.0') repeat;
+            font-family: 'Cormorant Garamond', serif;
+            color: #2a1a12;
+        }
+        .container {
+            max-width: 420px;
+            margin: 80px auto;
+            background: #c6b2a3;
+            padding: 30px;
+            border: 10px solid #8b4513;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+        }
+        h2 {
+            text-align: center;
+            font-family: 'Cinzel', serif;
+            margin-bottom: 20px;
+            color: #4c2f1b;
+        }
+        label {
+            display: block;
+            margin-top: 15px;
+            font-weight: bold;
+            font-size: 1.1rem;
+        }
+        input {
+            width: 90%;
+            padding: 10px;
+            margin-top: 5px;
+            border: 3px solid #8b4513;
+            background: #f4e7da;
+            font-size: 1rem;
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            margin-top: 25px;
+            background: #8b4513;
+            color: white;
+            font-size: 1.3rem;
+            border: 3px solid #3e2723;
+            cursor: pointer;
+            font-family: 'Cinzel', serif;
+            box-shadow: 4px 4px 0px #000;
+        }
+        button:hover {
+            background: #a0522d;
+        }
+        #error-message {
+            color: darkred;
+            font-weight: bold;
+            text-align: center;
+            margin-top: 15px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <form id="login-form">
+        <h2>Login</h2>
+
+        <label for="email">Email</label>
+        <input type="email" id="email" required>
+
+        <label for="password">Password</label>
+        <input type="password" id="password" required>
+
+        <button type="submit">Login</button>
+
+        <p id="error-message"></p>
+    </form>
+</div>
+
+<script src="../static/js/index.js"></script>
+</body>
+</html>

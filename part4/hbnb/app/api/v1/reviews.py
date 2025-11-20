@@ -2,6 +2,7 @@ from flask_restx import Namespace, Resource, fields
 from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade
+from app.Extensions import db
 
 # -----------------------
 # NAMESPACE
@@ -25,6 +26,7 @@ class ReviewList(Resource):
     @api.expect(review_model)
     @api.response(201, 'Review successfully created')
     @api.response(400, 'Invalid input data')
+    @api.doc(security='BearerAuth')
     @jwt_required()
     def post(self):
         """Register a new review"""
@@ -73,6 +75,7 @@ class ReviewResource(Resource):
     @api.response(200, 'Review updated successfully')
     @api.response(404, 'Review not found')
     @api.response(403, 'Unauthorized')
+    @api.doc(security='BearerAuth')
     @jwt_required()
     def put(self, review_id):
         """Update a review (author or admin)"""
@@ -91,25 +94,35 @@ class ReviewResource(Resource):
         updated_review = facade.update_review(review_id, data)
         return {"message": "Review updated successfully"}, 200
 
+    @jwt_required()
     @api.response(200, 'Review deleted successfully')
     @api.response(404, 'Review not found')
     @api.response(403, 'Unauthorized')
-    @jwt_required()
+    @api.doc(security='BearerAuth')
     def delete(self, review_id):
         """Delete a review (author or admin)"""
-        current_user_id = get_jwt_identity()
-        claims = get_jwt()
+
+        user_id = get_jwt_identity()
+        claims = get_jwt()  # <-- FIXED
+
+        if not claims.get("is_admin"):
+            return {'error': 'Admin privileges required'}, 403
         is_admin = claims.get('is_admin', False)
 
         review = facade.get_review(review_id)
         if not review:
             return {"message": "Review not found"}, 404
 
-        if review.user_id != current_user_id and not is_admin:
-            return {"message": "Unauthorized action"}, 403
+        # Only owner or admin can delete
+        user = facade.get_user(user_id)
 
-        facade.delete_review(review_id)
-        return {"message": "Review deleted successfully"}, 200
+        if review.user_id != user_id and not user.is_admin:
+            return {"error": "Unauthorized"}, 403
+
+        facade.review_repo.delete(review.id)
+        db.session.commit()
+
+        return {"message": "Review deleted"}, 200
 
 # -----------------------
 # LIST REVIEWS FOR A PLACE

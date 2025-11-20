@@ -1,6 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade  # instance commune du facade
 
 api = Namespace('places', description='Place operations')
@@ -148,6 +148,7 @@ class PlaceResource(Resource):
 
         facade.delete_place(place_id)
         return {"message": "Place deleted successfully"}, 200
+    
 from flask_restx import Namespace, Resource, fields
 from flask import request
 from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
@@ -195,7 +196,9 @@ class PlaceList(Resource):
     @api.expect(place_model)
     @api.response(201, 'Place created successfully')
     @api.response(400, 'Invalid data')
+    @api.doc(security='BearerAuth')
     @jwt_required()
+
     def post(self):
         """Create a new place (authenticated users only)"""
         current_user_id = get_jwt_identity()
@@ -253,6 +256,7 @@ class PlaceResource(Resource):
     @api.response(200, 'Place updated successfully')
     @api.response(404, 'Place not found')
     @api.response(403, 'Unauthorized')
+    @api.doc(security='BearerAuth')
     @jwt_required()
     def put(self, place_id):
         """Update place info (owner or admin)"""
@@ -284,6 +288,7 @@ class PlaceResource(Resource):
     @api.response(200, 'Place deleted successfully')
     @api.response(404, 'Place not found')
     @api.response(403, 'Unauthorized')
+    @api.doc(security='BearerAuth')
     @jwt_required()
     def delete(self, place_id):
         """Delete a place (owner or admin)"""

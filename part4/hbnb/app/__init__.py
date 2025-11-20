@@ -2,6 +2,7 @@ from flask import Flask
 from flask_restx import Api
 from app.Extensions import jwt, bcrypt, db
 from config import DevelopmentConfig
+from flask_cors import CORS
 
 from app.api.v1.places import api as places_ns
 from app.api.v1.users import api as users_ns
@@ -11,13 +12,23 @@ from app.api.v1.auth import api as auth_ns
 
 
 authorizations = {
-    'Bearer': {
+    'BearerAuth': {
         'type': 'apiKey',
         'in': 'header',
         'name': 'Authorization',
-        'description': "Entrer le token JWT comme : **Bearer <votre_token>**"
+        'description': "Use: Bearer <your_token>"
     }
 }
+
+api = Api(
+    title="HBnB API",
+    version="1.0",
+    description="HBnB Application API",
+    doc="/api/v1/",
+    authorizations=authorizations,
+    security='BearerAuth'
+)
+
 
 def create_app(config_class=DevelopmentConfig):
     app = Flask(__name__)
@@ -28,6 +39,18 @@ def create_app(config_class=DevelopmentConfig):
 
     # Set up bcrypt
     bcrypt.init_app(app)
+
+    # Set up Cors
+    CORS(app, resources={
+        r"/*": {
+            "origins": ["http://localhost:5000",
+                        "http://127.0.0.1:5000",
+                        "http://127.0.0.1:3000"
+                        ],
+            "methods": ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+            "allow_headers": ["Content-Type", "Authorization"]
+        }
+    })
 
     # Set up jwt
     jwt.init_app(app)

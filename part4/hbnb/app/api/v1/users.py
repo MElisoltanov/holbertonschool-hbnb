@@ -1,6 +1,6 @@
 from flask_restx import Namespace, Resource, fields
 from flask import request
-from flask_jwt_extended import jwt_required, get_jwt_identity
+from flask_jwt_extended import jwt_required, get_jwt_identity, get_jwt
 from app.services import facade
 
 api = Namespace('users', description='User operations')
@@ -62,6 +62,7 @@ class UserResource(Resource):
         return user.to_dict(), 200
 
     @api.expect(user_update_model)
+    @api.doc(security='BearerAuth')
     @jwt_required()
     @api.response(200, 'User updated successfully')
     @api.response(400, 'Invalid input data')
@@ -98,10 +99,11 @@ class AdminUserCreate(Resource):
     @api.response(201, 'User successfully created')
     @api.response(400, 'Invalid input data')
     @api.response(403, 'Admin privileges required')
+    @api.doc(security='BearerAuth')
     def post(self):
         """Admin can create a new user"""
-        current_user = get_jwt_identity()
-        if not current_user.get('is_admin'):
+        claims = get_jwt()  # <-- FIXED
+        if not claims.get("is_admin"):
             return {'error': 'Admin privileges required'}, 403
 
         user_data = request.json
@@ -124,12 +126,13 @@ class AdminUserModify(Resource):
     @api.response(400, 'Invalid input data')
     @api.response(403, 'Admin privileges required')
     @api.response(404, 'User not found')
+    @api.doc(security='BearerAuth')
     def put(self, user_id):
         """Admin can update any user info, including email/password"""
-        current_user = get_jwt_identity()
-        if not current_user.get('is_admin'):
+        claims = get_jwt()  # <-- FIXED
+        if not claims.get("is_admin"):
             return {'error': 'Admin privileges required'}, 403
-
+        
         data = request.json or {}
         email = data.get('email')
         if email:

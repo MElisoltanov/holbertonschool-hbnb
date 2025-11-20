@@ -31,6 +31,27 @@ class HBnBFacade:
 
     def get_all_users(self):
         return self.user_repo.get_all()
+    
+    def update_user(self, user_id, data):
+        user = self.get_user(user_id)
+        if not user:
+            return None
+
+        # Update allowed fields
+        if "email" in data and data["email"] is not None:
+            user.email = data["email"]
+
+        if "password" in data and data["password"] is not None:
+            user.hash_password(data["password"])
+
+        if "name" in data and data["name"] is not None:
+            user.name = data["name"]
+
+        if "is_admin" in data:
+            user.is_admin = data["is_admin"]
+
+        db.session.commit()
+        return user
 
     # =====================
     # Place facade
@@ -124,6 +145,15 @@ class HBnBFacade:
 
         db.session.commit()
         return place
+    
+    def delete_place(self, place_id):
+        place = self.place_repo.get(place_id)
+        if not place:
+            return None
+
+        db.session.delete(place)
+        db.session.commit()
+        return place
 
     # =====================
     # Review facade
@@ -154,6 +184,28 @@ class HBnBFacade:
 
     def get_all_reviews(self):
         return self.review_repo.get_all()
+    
+    def get_reviews_by_place(self, place_id):
+        return [review for review in self.review_repo.get_all() if review.place_id == place_id]
+    
+    def update_review(self, review_id, data):
+        review = self.review_repo.get(review_id)
+        if not review:
+            return None
+
+        # Update allowed fields only
+        if "text" in data and data["text"] is not None:
+            review.text = data["text"]
+
+        if "rating" in data and data["rating"] is not None:
+            rating = data["rating"]
+            if not (1 <= rating <= 5):
+                raise ValueError("Rating must be between 1 and 5")
+            review.rating = rating
+
+            db.session.commit()
+            return review
+
     ##new
 
     # =====================
@@ -174,3 +226,18 @@ class HBnBFacade:
 
     def get_all_amenities(self):
         return self.amenity_repo.get_all()
+    
+    def get_user_review_for_place(self, user_id, place_id):
+        return Review.query.filter_by(user_id=user_id, place_id=place_id).first()
+    
+    def update_amenity(self, amenity_id, data):
+        amenity = self.get_amenity(amenity_id)
+        if not amenity:
+            return None
+
+        # Update only allowed fields
+        if "name" in data and data["name"] is not None:
+            amenity.name = data["name"]
+
+        db.session.commit()
+        return amenity
