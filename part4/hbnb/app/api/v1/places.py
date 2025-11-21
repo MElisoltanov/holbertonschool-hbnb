@@ -305,3 +305,44 @@ class PlaceResource(Resource):
 
         facade.delete_place(place_id)
         return {"message": "Place deleted successfully"}, 200
+    
+    #NEW FOR THE PLACE REVIEW FRONT
+    @api.route('/<place_id>/reviews')
+    class PlaceReviews(Resource):
+
+        def options(self, place_id):
+            return {}, 200
+
+        @jwt_required()
+        def post(self, place_id):
+            current_user_id = get_jwt_identity()
+            claims = get_jwt()
+            is_admin = claims.get("is_admin", False)
+
+            place = facade.get_place(place_id)
+            if not place:
+                return {"message": "Place not found"}, 404
+
+            data = request.get_json()
+            data["place_id"] = place_id
+            data["user_id"] = current_user_id
+
+            if place.owner_id == current_user_id and not is_admin:
+                return {"message": "You cannot review your own place"}, 400
+
+            existing = facade.get_user_review_for_place(current_user_id, place_id)
+            if existing and not is_admin:
+                return {"message": "You already reviewed this place"}, 400
+
+            review = facade.create_review(data)
+            return review.to_dict(), 201
+
+        def get(self, place_id):
+            """Return all reviews for a place"""
+            place = facade.get_place(place_id)
+            if not place:
+                return {"message": "Place not found"}, 404
+
+            reviews = facade.get_reviews_by_place(place_id)
+            return [r.to_dict() for r in reviews], 200
+    

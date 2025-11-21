@@ -11,6 +11,7 @@ class Review(BaseModel, db.Model):
 
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     place_id = db.Column(db.Integer, db.ForeignKey('places.id'), nullable=False)
+    user = db.relationship("User", backref="reviews")
 
 
     def __init__(self, user_id, place_id, text, rating=5, **kwargs):
@@ -28,14 +29,18 @@ class Review(BaseModel, db.Model):
         self.rating = rating
 
     def to_dict(self):
-
         return {
             "id": self.id,
-            "user_id": self.user_id,
-            "place_id": self.place_id,
             "text": self.text,
             "rating": self.rating,
+            "user": {
+                "id": self.user.id,
+                "name": self.user.first_name + " " + self.user.last_name if self.user else None,
+                "email": self.user.email if self.user else None
+            },
+            "place_id": self.place_id
         }
+
 
     def __str__(self):
         return "Review(id={}, rating={}, place_id={}, user_id={})".format(

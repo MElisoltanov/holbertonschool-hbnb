@@ -16,29 +16,33 @@
   </header>
 
   <main>
-    <h1>Add a Review</h1>
-    <form class="add-review-form">
-      <label for="username">Your Name:</label>
-      <input type="text" id="username" name="username" required>
+    <form id="review-form">
+    <label for="review-username">Your Name:</label>
+    <input type="text" id="review-username" required>
 
-      <label for="rating">Rating:</label>
-      <select id="rating" name="rating" required>
+    <label for="review-rating">Rating:</label>
+    <select id="review-rating" required>
         <option value="5">5 - Excellent</option>
         <option value="4">4 - Very Good</option>
         <option value="3">3 - Average</option>
         <option value="2">2 - Poor</option>
         <option value="1">1 - Terrible</option>
-      </select>
+    </select>
 
-      <label for="comment">Comment:</label>
-      <textarea id="comment" name="comment" rows="4" required></textarea>
+    <label for="review-text">Comment:</label>
+    <textarea id="review-text" rows="4" required></textarea>
 
-      <button type="submit">Submit Review</button>
+    <button type="submit">Submit Review</button>
     </form>
+
+<p id="review-message"></p>
+
+<p id="review-message"></p>
   </main>
 
   <footer>
     <p>© 2025 HBNB. All rights reserved.</p>
   </footer>
+  <script src="../static/js/review.js"></script>
 </body>
 </html>

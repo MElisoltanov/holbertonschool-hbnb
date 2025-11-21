@@ -137,3 +137,44 @@ class PlaceReviewList(Resource):
             return {"message": "Place not found"}, 404
         reviews = facade.get_reviews_by_place(place_id)
         return [r.to_dict() for r in reviews], 200
+    
+
+# -----------------------
+# ID FOR THE REVIEWS OF A PLACE
+# -----------------------
+@api.route('/places/<place_id>/reviews')
+class PlaceReviewCreate(Resource):
+
+    def options(self, place_id):
+        # Allow CORS preflight
+        return {}, 200
+
+    @api.expect(review_model)
+    @api.doc(security='BearerAuth')
+    @jwt_required()
+    def post(self, place_id):
+        """Create review for a place (frontend compatible route)"""
+        current_user_id = get_jwt_identity()
+        claims = get_jwt()
+        is_admin = claims.get('is_admin', False)
+
+        # Validate place exists
+        place = facade.get_place(place_id)
+        if not place:
+            return {"message": "Place not found"}, 404
+
+        data = request.json
+        data["place_id"] = place_id
+        data["user_id"] = current_user_id
+
+        # User cannot review their own place unless admin
+        if place.owner_id == current_user_id and not is_admin:
+            return {"message": "You cannot review your own place."}, 400
+
+        # User cannot review twice unless admin
+        existing = facade.get_user_review_for_place(current_user_id, place_id)
+        if existing and not is_admin:
+            return {"message": "You have already reviewed this place."}, 400
+
+        review = facade.create_review(data)
+        return review.to_dict(), 201

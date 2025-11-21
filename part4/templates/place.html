@@ -31,13 +31,20 @@
 
     <!-- If user is logged in -->
     <p style="text-align:center; margin:30px 0;">
-        <a href="add_review.html?id=1" class="add-review-btn">Write a Review</a>
+        
+        <a id="add-review-link" href="#">Add Review</a>
     </p>
 
-    <h2 style="margin-top:40px;">Reviews</h2>
 
     <!-- More reviews... -->
 </div>
+    <div id="review-section">
+        <h3>Reviews</h3>
+
+        <div id="reviews-list">
+            <!-- Reviews get injected here by place.js -->
+        </div>
+    </div>
 
 <script src="../static/js/place.js"></script>
 
