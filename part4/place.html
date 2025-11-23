@@ -1,31 +1,119 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Place Details</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="HBnB - Browse vacation rentals and find your perfect place">
+  <title>Places - HBnB</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="header"></div>
-    <main>
-        <section id="place-details">
-            <!-- Place details will be populated dynamically -->
-        </section>
-        <section id="reviews">
-            <!-- Reviews will be populated dynamically -->
-        </section>
-        <section id="add-review">
-            <h2>Add a Review</h2>
-            <form id="review-form">
-                <label for="review-text">Review:</label>
-                <textarea id="review-text" name="review-text" required></textarea>
-                
-                <button type="submit">Submit</button>
-            </form>
-        </section>
-    </main>
-    <div id="footer"></div>
-    <script src="scripts.js"></script>
+
+  <header>
+    <div class="header-container">
+      <a href="place.html">
+        <img src="images/logo.png" class="logo" alt="HBnB Logo" height="40">
+      </a>
+      <div>
+        <button class="login-button" onclick="window.location.href='index.html'">Login</button>
+        <button class="logout-button hidden">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <a href="place.html" class="active">Home</a>
+      <a href="index.html">Login</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+    <div class="page-header">
+      <h1>Discover Your Next Stay</h1>
+      <p style="color: var(--dark-gray);">Find unique places to stay for your next adventure</p>
+    </div>
+
+    <!-- Filters -->
+    <div class="filters">
+      <label>Filter by price:</label>
+      <button class="filter-button active" data-filter="all">All Prices</button>
+      <button class="filter-button" data-filter="10">Under $10</button>
+      <button class="filter-button" data-filter="50">Under $50</button>
+      <button class="filter-button" data-filter="100">Under $100</button>
+    </div>
+
+    <!-- Places Grid -->
+    <div class="places-grid">
+      <!-- Only the main info for each place -->
+      <!-- Place 1 -->
+      <div class="place-card">
+        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBob3VzZSUyMGV4dGVyaW9yfGVufDF8fHx8MTc2MzQ4MDQ5MXww&ixlib=rb-4.1.0&q=80&w=1080" alt="Modern Downtown Loft" class="place-img">
+        <div class="place-info">
+          <h2>Modern Downtown Loft</h2>
+          <div class="place-location">New York, USA</div>
+          <div class="place-price">$85/night</div>
+          <button class="details-button" onclick="window.location.href='place-details.html?id=1'">View Details</button>
+        </div>
+      </div>
+      <!-- Place 2 -->
+      <div class="place-card">
+        <img src="https://images.unsplash.com/photo-1638454668466-e8dbd5462f20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBhcGFydG1lbnQlMjBpbnRlcmlvcnxlbnwxfHx8fDE3NjM0ODE2MjN8MA&ixlib=rb-4.1.0&q=80&w=1080" alt="Luxury Penthouse Suite" class="place-img">
+        <div class="place-info">
+          <h2>Luxury Penthouse Suite</h2>
+          <div class="place-location">Los Angeles, USA</div>
+          <div class="place-price">$150/night</div>
+          <button class="details-button" onclick="window.location.href='place-details.html?id=2'">View Details</button>
+        </div>
+      </div>
+      <!-- Place 3 -->
+      <div class="place-card">
+        <img src="https://images.unsplash.com/photo-1638454668466-e8dbd5462f20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBhcGFydG1lbnQlMjBpbnRlcmlvcnxlbnwxfHx8fDE3NjM0ODE2MjN8MA&ixlib=rb-4.1.0&q=80&w=1080" alt="Cozy Mountain Cabin" class="place-img">
+        <div class="place-info">
+          <h2>Cozy Mountain Cabin</h2>
+          <div class="place-location">Aspen, USA</div>
+          <div class="place-price">$45/night</div>
+          <button class="details-button" onclick="window.location.href='place-details.html?id=3'">View Details</button>
+        </div>
+      </div>
+      <!-- Place 4 -->
+      <div class="place-card">
+        <img src="https://images.unsplash.com/photo-1596178067639-5c6e68aea6dc?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx2aWxsYSUyMHBvb2wlMjB2aWV3fGVufDF8fHx8MTc2MzU0NDgxNHww&ixlib=rb-4.1.0&q=80&w=1080" alt="Beachfront Villa Paradise" class="place-img">
+        <div class="place-info">
+          <h2>Villa Paradise</h2>
+          <div class="place-location">Miami, USA</div>
+          <div class="place-price">$120/night</div>
+          <button class="details-button" onclick="window.location.href='place-details.html?id=4'">View Details</button>
+        </div>
+      </div>
+      <!-- Place 5 -->
+      <div class="place-card">
+        <img src="https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBob3VzZSUyMGV4dGVyaW9yfGVufDF8fHx8MTc2MzQ4MDQ5MXww&ixlib=rb-4.1.0&q=80&w=1080" alt="Historic Townhouse" class="place-img">
+        <div class="place-info">
+          <h2>Historic Townhouse</h2>
+          <div class="place-location">Boston, USA</div>
+          <div class="place-price">$65/night</div>
+          <button class="details-button" onclick="window.location.href='place-details.html?id=5'">View Details</button>
+        </div>
+      </div>
+      <!-- Place 6 -->
+      <div class="place-card">
+        <img src="https://images.unsplash.com/photo-1638454668466-e8dbd5462f20?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxsdXh1cnklMjBhcGFydG1lbnQlMjBpbnRlcmlvcnxlbnwxfHx8fDE3NjM0ODE2MjN8MA&ixlib=rb-4.1.0&q=80&w=1080" alt="Minimalist Studio" class="place-img">
+        <div class="place-info">
+          <h2>Minimalist Studio</h2>
+          <div class="place-location">Portland, USA</div>
+          <div class="place-price">$35/night</div>
+          <button class="details-button" onclick="window.location.href='place-details.html?id=6'">View Details</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2024 HBnB. All rights reserved.</p>
+  </footer>
 </body>
 </html>

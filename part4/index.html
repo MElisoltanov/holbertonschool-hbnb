@@ -1,25 +1,81 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>List of Places</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="HBnB - Holberton AirBnB Clone - Login to access vacation rentals">
+  <title>Login - HBnB</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="header"></div>
-    <main>
-        <section id="filter">
-            <label for="price-filter">Max Price:</label>
-            <select id="price-filter">
-                <!-- Options will be populated dynamically -->
-            </select>
-        </section>
-        <section id="places-list">
-            <!-- List of places will be populated dynamically -->
-        </section>
-    </main>
-    <div id="footer"></div>
-    <script src="scripts.js"></script>
+
+  <header>
+    <div class="header-container">
+      <a href="place.html">
+        <img src="images/logo.png" class="logo" alt="HBnB Logo" height="40">
+      </a>
+      <div>
+        <button class="login-button" onclick="window.location.href='index.html'">Login</button>
+        <button class="logout-button hidden">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <a href="place.html">Home</a>
+      <a href="index.html" class="active">Login</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+    <div class="login-container">
+      <h1>Welcome to HBnB</h1>
+      <p style="text-align: center; color: var(--dark-gray); margin-bottom: 20px;">
+        Sign in to continue
+      </p>
+
+      <div id="message" class="message hidden"></div>
+
+      <form id="login-form">
+        <div class="form-group">
+          <label for="email">Email Address</label>
+          <input 
+            type="email" 
+            id="email" 
+            name="email" 
+            placeholder="your.email@example.com"
+            required
+          >
+        </div>
+
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input 
+            type="password" 
+            id="password" 
+            name="password" 
+            placeholder="Enter your password"
+            required
+          >
+        </div>
+
+        <button type="submit" class="btn-primary">Sign In</button>
+      </form>
+
+      <p style="text-align: center; margin-top: 20px; color: var(--dark-gray); font-size: 14px;">
+        Don't have an account? <a href="#" style="color: var(--primary-red); font-weight: 600;">Sign up</a>
+      </p>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2024 HBnB. All rights reserved.</p>
+  </footer>
+
+  <script src="scripts/main.js"></script>
 </body>
 </html>

@@ -1,27 +1,98 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Add Review</title>
-    <link rel="stylesheet" href="styles.css">
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description" content="HBnB - Add your review for this property">
+  <title>Add Review - HBnB</title>
+  <link rel="stylesheet" href="styles.css">
 </head>
 <body>
-    <div id="header"></div>
-    <main>
-        <!-- Add something to idfentify the place you're reviewing -->
-        <form id="review-form">
-            <h2>Add a Review</h2>
-            <label for="review">Your Review:</label>
-            <textarea id="review" name="review" required></textarea>
-            <label for="rating">Rating:</label>
-            <select id="rating" name="rating" required>
-                <!-- Options for rating -->
-            </select>
-            <button type="submit">Submit Review</button>
-        </form>
-    </main>
-    <div id="footer"></div>
-    <script src="scripts.js"></script>
+  <!-- Header -->
+  <header>
+    <div class="header-container">
+      <a href="place.html">
+        <img src="images/logo.png" class="logo" alt="HBnB Logo" height="40">
+      </a>
+      <div>
+        <button class="login-button hidden" onclick="window.location.href='index.html'">Login</button>
+        <button class="logout-button">Logout</button>
+      </div>
+    </div>
+  </header>
+
+  <!-- Navigation -->
+  <nav>
+    <div class="nav-container">
+      <a href="place.html">Home</a>
+      <a href="index.html">Login</a>
+    </div>
+  </nav>
+
+  <!-- Main Content -->
+  <main>
+    <div class="add-review-container">
+      <h1>Write a Review</h1>
+      
+      <!-- Place Preview -->
+      <div class="place-preview">
+        <img src="" alt="Place preview" class="place-preview-image">
+        <div class="place-preview-info">
+          <h3>Place Name</h3>
+          <p>Location</p>
+        </div>
+      </div>
+
+      <div id="message" class="message hidden"></div>
+
+      <!-- Review Form -->
+      <form id="review-form">
+        <div class="form-group">
+          <label for="rating">Rating</label>
+          <div class="rating-input">
+            <div class="star-rating">
+              <span class="star" data-rating="1">★</span>
+              <span class="star" data-rating="2">★</span>
+              <span class="star" data-rating="3">★</span>
+              <span class="star" data-rating="4">★</span>
+              <span class="star" data-rating="5">★</span>
+            </div>
+            <input type="hidden" id="rating" name="rating" value="0">
+          </div>
+          <p style="font-size: 12px; color: var(--dark-gray); margin-top: 5px;">
+            Click to rate from 1 to 5 stars
+          </p>
+        </div>
+
+        <div class="form-group">
+          <label for="comment">Your Review</label>
+          <textarea 
+            id="comment" 
+            name="comment" 
+            placeholder="Share your experience at this place..."
+            required
+          ></textarea>
+        </div>
+
+        <button type="submit" class="btn-primary">Submit Review</button>
+        <button 
+          type="button" 
+          class="btn-secondary" 
+          style="width: 100%; margin-top: 10px;"
+          onclick="history.back()"
+        >
+          Cancel
+        </button>
+      </form>
+    </div>
+  </main>
+
+  <!-- Footer -->
+  <footer>
+    <p>&copy; 2024 HBnB. All rights reserved.</p>
+  </footer>
+
+  <script src="scripts/places-data.js"></script>
+  <script src="scripts/main.js"></script>
 </body>
 </html>
